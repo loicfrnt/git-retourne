@@ -7,6 +7,19 @@ if [ -z "$branch" ]; then
     branch=$(git branch --show-current)
 fi
 
+# Check if the branch is master
+if [ "$branch" = "master" ]; then
+    echo "You cannot delete the master branch."
+    exit 1
+fi
+
+# Check if the branch exists
+git show-ref --verify --quiet refs/heads/${branch}
+if [ $? -ne 0 ]; then
+    echo "Branch '$branch' does not exist."
+    exit 1
+fi
+
 # Prompt for confirmation
 read -p "Are you sure you want to delete branch '$branch'? (Y/N): " answer
 
