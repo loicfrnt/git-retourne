@@ -16,13 +16,12 @@ branch=$1
 if branchExists master; then 
     mainBranch='master'
 else
-    mainBranch='main'
-
     if branchExists main; then :;
     else 
         echo "No branch called main or master exists."
         exit 1
     fi
+    mainBranch='main'
 fi
 
 
