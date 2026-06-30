@@ -12,16 +12,19 @@ branchExists(){
 # argument 1: target branch to delete, fetch and return to
 branch=$1
 
-# if there is no branch called master, use main instead
-if branchExists master; then 
-    mainBranch='master'
-else
-    if branchExists main; then :;
-    else 
-        echo "No branch called main or master exists."
+# Detect the default branch from origin's HEAD, fall back to main/master for local-only repos
+mainBranch=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@')
+
+if [ -z "$mainBranch" ]; then
+    if branchExists main; then
+        mainBranch='main'
+    elif branchExists master; then
+        mainBranch='master'
+    else
+        echo "Could not detect a default branch (no origin/HEAD, no main, no master)."
+        echo "Tip: run 'git remote set-head origin -a' to refresh origin/HEAD."
         exit 1
     fi
-    mainBranch='main'
 fi
 
 
